@@ -6,3 +6,7 @@
 /InstructionMemory.class
 /PC.class
 /Registers.class
+/Processor.class
+/MipsSimulator.class
+/Translator.class
+/Instruction.class
