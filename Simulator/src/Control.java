@@ -5,7 +5,17 @@
 
 public class Control {
 
-	Control(){
+	private boolean RegDist;
+	private boolean Branch;
+	private boolean MemRead;
+	private boolean MemtoReg;
+	private boolean ALUOp1;
+	private boolean ALUOp0;
+	private boolean MemWrite;
+	private boolean ALUsrc;
+	private boolean RegWrite;
+	
+	public Control(){
 		
 	}
 
