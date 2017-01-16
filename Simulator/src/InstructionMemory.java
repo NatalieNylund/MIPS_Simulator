@@ -27,7 +27,7 @@ public class InstructionMemory {
 	 * @return the instruction
 	 */
 	public Instruction fetch(int pc) {
-		/* Divide program counter by 4 because each element in the array represents 32 bits */
+		/* Divide program counter by 4 because each element in the array represents 4 bytes */
 		return instructions[pc/4];
 	}
 
