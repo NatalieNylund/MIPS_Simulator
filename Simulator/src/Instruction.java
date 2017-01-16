@@ -1,43 +1,57 @@
 import java.util.*;
 
+/*
+ * This class takes a line of an instruction and parses it 
+ * to parameters depending of the instruction.
+ * Input: String line, a line with an instruction
+ * Output: short, boolean, parameters set based on instruction
+ */
+
 public class Instruction {
 	
+	//R-format rd, rs, rt
 	public static final short FUNCT_ADD = 0x20;
 	public static final short FUNCT_SUB = 0x22;
 	public static final short FUNCT_AND = 0x24;
 	public static final short FUNCT_OR = 0x25;
 	public static final short FUNCT_NOR = 0x27;
 	public static final short FUNCT_SLT = 0x2a;
-
+	// J-format rs
+	public static final short FUNCT_JR = 0x08;
+	// I-format rt, adress
 	public static final short OPCODE_LW = 0x23;
 	public static final short OPCODE_SW = 0x2b;
-
+	// I-format rs, rt, label
 	public static final short OPCODE_BEQ = 4;
 	
-	public static final short FUNCT_ADDI = 0x08;
-	public static final short FUNCT_ORI = 0x0d;
+	// I-format rt, rs, imm
+	public static final short OPCODE_ADDI = 0x08;
+	public static final short OPCODE_ORI = 0x0d;
+	// I-format rd, rt, shamt
 	public static final short FUNCT_SRL = 0x02;
 	public static final short FUNCT_SRA = 0x03;
+	// J-format target
 	public static final short OPCODE_J = 0x02;
-	public static final short FUNCT_JR = 0x08;
-			
 
-	private String repr;
 	private short opcode = 0;
 	private short funct = 0;
+	private short shamt = 0;
+	private short label = 0;
+	private short adress = 0;
 	private short rd = 0;
 	private short rs = 0;
 	private short rt = 0;
 	private short imm = 0;
+
 	private boolean r_type = false;
+	private boolean j_type = false;
+	private boolean i_type = false;
 	private boolean is_exit;
 	private boolean is_nop;
 
 	
 	public Instruction(String line) throws Exception {
 			
-			repr = line;
-
 			line = line.replaceAll(",", "");
 			StringTokenizer tokens = new StringTokenizer(line, " ");
 			String op = "", t1 = "", t2 = "", t3 = "";
@@ -68,20 +82,45 @@ public class Instruction {
 			} else if(op.equalsIgnoreCase("slt")) {
 				funct = FUNCT_SLT;
 				r_type = true;
-			}else if(op.equalsIgnoreCase("addi"){
-				funct = 
 			}
-
+			else if(op.equalsIgnoreCase("srl")){
+				funct = FUNCT_SRL;
+				i_type = true;
+			}
+			else if(op.equalsIgnoreCase("sra")){
+				funct = FUNCT_SRA;
+				i_type = true;
+			}
+			else if(op.equalsIgnoreCase("jr")){
+				funct = FUNCT_JR;
+				j_type = true;
+			}
+			
+			else if(op.equalsIgnoreCase("ori")){
+				opcode = OPCODE_ORI;
+				i_type = true;
+			}
+			else if(op.equalsIgnoreCase("addi")){
+				opcode = OPCODE_ADDI;
+				i_type = true;
+			}
 			else if(op.equalsIgnoreCase("lw")) {
 				opcode = OPCODE_LW;
-			} else if(op.equalsIgnoreCase("sw")) {
+				i_type = true;
+			} 
+			else if(op.equalsIgnoreCase("sw")) {
 				opcode = OPCODE_SW;
+				i_type = true;
 			}
-
+			else if(op.equalsIgnoreCase("j")){
+				opcode = OPCODE_J;
+				j_type = true;
+			}
 			else if(op.equalsIgnoreCase("beq")) {
 				opcode = OPCODE_BEQ;
+				i_type = true;
 			}
-
+			
 			else if(op.equalsIgnoreCase("nop")) {
 				is_nop = true;
 			}
@@ -90,32 +129,55 @@ public class Instruction {
 				is_exit = true;
 			}
 
-
-			// Parse additional parameters
-			if(opcode == OPCODE_LW || opcode == OPCODE_SW) {
-				rt = parseReg(t1);
-				if(t2.indexOf('(') != -1) {
-					//Fix this
-					rs = parseWrappedReg(t2);
-					//Fix this
-					imm = parseWrappedOffset(t2);
-				} else {
-					//Fix this
-					rs = parseReg(t2);
-					imm = 0;
-				}
-			} else if(r_type) {
+			
+			//Parse additional parameters
+			if(r_type){
 				rd = parseReg(t1);
 				rs = parseReg(t2);
 				rt = parseReg(t3);
-
-			} else if(opcode == OPCODE_BEQ) {
-				rs = parseReg(t1);
-				rt = parseReg(t2);
-				//Fix this
-				imm = parseAddr(t3);
 			}
-
+			else if(i_type){
+				if(opcode == OPCODE_LW || opcode == OPCODE_SW){
+					//Here t3 should be empty
+					rt = parseReg(t1);
+					if((t2.indexOf('(')!= -1) && t2.contains("x")){
+						rs = parseReg(t2.substring(t2.indexOf('(')+1, t2.indexOf(')')));
+						adress = parseAddr(t2.substring(0, t2.indexOf('(')));
+					}
+					else if(t2.indexOf('(')!= -1){
+						rs = parseReg(t2.substring(t2.indexOf('(')+1, t2.indexOf(')')));
+					}
+					else{
+						adress = parseAddr(t2);
+					}
+					
+						
+				}
+				else if(opcode == OPCODE_ADDI || opcode == OPCODE_ORI){
+					rt = parseReg(t1);
+					rs = parseReg(t2);
+					imm = parseAddr(t3);
+				}
+				else if(funct == FUNCT_SRL || funct == FUNCT_SRA){
+					rd = parseReg(t1);
+					rt = parseReg(t2);
+					shamt = parseAddr(t3);
+					
+				}
+				else if(opcode == OPCODE_BEQ){
+					rs = parseReg(t1);
+					rt = parseReg(t2);
+					label = parseAddr(t3);
+				}
+			}
+			else if(j_type){
+				if(funct == FUNCT_JR){
+					rs = parseReg(t1);
+				}
+				else if(opcode == OPCODE_J){
+					adress = parseReg(t1);
+				}
+			}
 	}
 
 
@@ -155,7 +217,6 @@ public class Instruction {
 			default:
 				throw new Exception("Invalid register " + register);
 			}
-			assert register.equals(RegisterFile.name(number));
 			return number;
 		}
 
@@ -163,6 +224,9 @@ public class Instruction {
 	}
 	
 	private short parseAddr(String address) {
+		/*
+		 * If address is in hexadecimal
+		 */
 		if(address.contains("x")) {
 			return Short.parseShort(
 					address.substring(address.indexOf('x')+1), 16);
@@ -170,17 +234,55 @@ public class Instruction {
 		return Short.parseShort(address);
 	}
 	
-	private short parseWrappedOffset(String token) {
-		return parseAddr(token.substring(0, token.indexOf('(')));
+	//Get-methods for each parameter
+	public short getOpcode(){
+		return opcode;
 	}
-
-
-	private short parseWrappedReg(String token) {
-		try {
-			return parseReg(token.substring(token.indexOf('(')+1, token.indexOf(')')));
-		} catch (Exception e) {
-			return 0;
+	public short getFunct(){
+		return funct;
+	}
+	public short getShamt(){
+		return shamt;
+	}
+	public short getLabel(){
+		return label;
+	}
+	public short getAdress(){
+		return adress;
+	}
+	public short getRd(){
+		return rd;
+	}
+	public short getRs(){
+		return rs;
+	}
+	public short getRt(){
+		return rt;
+	}
+	public short getImm(){
+		return imm;
+	}
+	public char getType(){
+		if(r_type){
+			return 'r';
+		}
+		else if(i_type){
+			return 'i';
+		}
+		else if(j_type){
+			return 'j';
+			
+		}
+		else{
+			return 'e';
 		}
 	}
+	public boolean getExit(){
+		return is_exit;
+	}
+	public boolean getNop(){
+		return is_nop;
+	}
 
+	
 }
