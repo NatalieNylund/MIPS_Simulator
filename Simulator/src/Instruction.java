@@ -247,7 +247,7 @@ public class Instruction {
 	public short getLabel(){
 		return label;
 	}
-	public short getAdress(){
+	public short getAddress(){
 		return adress;
 	}
 	public short getRd(){
