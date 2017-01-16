@@ -3,10 +3,10 @@
 /ALUControl.class
 /Control.class
 /DataMemory.class
-/InstructionMemory.class
-/PC.class
-/Registers.class
-/Processor.class
-/MipsSimulator.class
-/Translator.class
 /Instruction.class
+/InstructionMemory.class
+/MipsSimulator.class
+/PC.class
+/Processor.class
+/Registers.class
+/Translator.class
