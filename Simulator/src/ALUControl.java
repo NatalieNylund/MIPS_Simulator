@@ -3,19 +3,19 @@
  */
 
 public class ALUControl {
-	public short ADD = 0x20;
-	public short SUB = 0x22;
-	public short AND = 0x24;
-	public short OR = 0x25;
-	public short NOR = 0x27;
-	public short SLT = 0x2a;
+	private short ADD = 0x20;
+	private short SUB = 0x22;
+	private short AND = 0x24;
+	private short OR = 0x25;
+	private short NOR = 0x27;
+	private short SLT = 0x2a;
 	
-	public short ALU_AND = 0x0;
-	public short ALU_OR = 0x1;
-	public short ALU_ADD = 0x2;
-	public short ALU_SUB = 0x6;
-	public short ALU_SLT = 0x7;
-	public short ALU_NOR = 0xc;
+	private short ALU_AND = 0x0;
+	private short ALU_OR = 0x1;
+	private short ALU_ADD = 0x2;
+	private short ALU_SUB = 0x6;
+	private short ALU_SLT = 0x7;
+	private short ALU_NOR = 0xc;
 			
 	
 	public ALUControl(){
