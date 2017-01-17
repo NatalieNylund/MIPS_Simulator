@@ -31,8 +31,25 @@ public class Control {
 		setALUSrc(false);  
 		setRegWrite(false);  
 		
+		/* If beq */
+		if(instr.getOpcode() == 0x04){
+			setBranch(true);
+			setALUOp0(true);
+		}
+		/* If lw */
+		else if(instr.getOpcode() == 0x23) {
+			setALUSrc(true);
+			setMemtoReg(true);
+			setRegWrite(true);
+			setMemRead(true);
+		}
+		/* If sw */
+		else if(instr.getOpcode() == 0x2b) {
+			setALUSrc(true);
+			setMemWrite(true);
+		}
 		/* If R format */
-		if(instr.getType() == 'r') {
+		else if(instr.getType() == 'r') {
 			setRegDst(true);
 			setRegWrite(true);
 			setALUOp1(true);
@@ -47,23 +64,6 @@ public class Control {
 		else if(instr.getType() == 'j') {
 			setJump(true);
 			//ALUOp?
-		}
-		/* If lw */
-		else if(instr.getOpcode() == 0x23) {
-			setALUSrc(true);
-			setMemtoReg(true);
-			setRegWrite(true);
-			setMemRead(true);
-		}
-		/* If sw */
-		else if(instr.getOpcode() == 0x2b) {
-			setALUSrc(true);
-			setMemWrite(true);
-		}
-		/* If beq */
-		else if(instr.getOpcode() == 0x04){
-			setBranch(true);
-			setALUOp0(true);
 		}
 
 	}
