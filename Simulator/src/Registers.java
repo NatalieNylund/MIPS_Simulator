@@ -51,16 +51,19 @@ public class Registers {
 	}
 
 	private void set(int addr, byte val) {
-		registers[addr] = val;
+			registers[addr] = val;
 	}
 
 	public byte readReg(int addr) {
-		return get(addr);
+		if(addr <= 32) {
+			return get(addr);
+		}
+		return -1;
 	}
 
 	public void writeReg(int addr, byte data) {
-		/* Address 0 is $zero register */
-		if(addr != 0) {
+		/* There are only 32 registers and address 0 is $zero register */
+		if((addr <= 32) && (addr != 0)) {
 			set(addr, data);
 		}
 	}
