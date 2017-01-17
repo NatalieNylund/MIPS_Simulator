@@ -4,9 +4,14 @@ public class Main {
 
 	private static Instruction instruction;
 	private static Control control;
+	private static ALUControl ALUControl;
 	
 	public static void main(String[] args) throws Exception {
 		
+		boolean ALUOpCode = false;
+		short ALUOp1 = 0;
+		short ALUOp0 = 0;
+		short ALUControlInp = 0;
 		BufferedReader br = null;
 		br = new BufferedReader(new FileReader("instructions.txt"));
 
@@ -18,12 +23,27 @@ public class Main {
 			System.out.println("INSTRUCTION: " + line);
 			printStuff(instruction);
 			control = new Control(instruction);
+			
+			ALUOpCode = control.getALUOp0();
+			if(ALUOpCode == false){
+				ALUOp0 = 0;
+			}else ALUOp0 = 1;
+			
+			ALUOpCode = control.getALUOp1();
+			if(ALUOpCode == false){
+				ALUOp1 = 0;
+			}else ALUOp1 = 1;
+			
+			ALUControl = new ALUControl();
+			ALUControlInp = ALUControl.getALUControlInput(ALUOp1, ALUOp0, instruction.getFunct());
+			System.out.println("ALU Control Input = " + ALUControlInp);
 			boolean memToReg = control.getMemtoReg();
 			System.out.println("MemToReg: " + memToReg);
 					
 		 	sb.append(line);
 		    sb.append(System.lineSeparator());
 		    line = br.readLine();
+		    System.out.println();
 		}   
 		br.close();
 
