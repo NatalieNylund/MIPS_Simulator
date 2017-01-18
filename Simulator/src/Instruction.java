@@ -16,9 +16,8 @@ public class Instruction {
 	public static final short FUNCT_OR = 0x25;
 	public static final short FUNCT_NOR = 0x27;
 	public static final short FUNCT_SLT = 0x2a;
-	// J-format rs
-	public static final short FUNCT_JR = 0x08;
-	// I-format rt, adress
+
+	// I-format rt, adress(rs)
 	public static final short OPCODE_LW = 0x23;
 	public static final short OPCODE_SW = 0x2b;
 	// I-format rs, rt, label
@@ -32,17 +31,20 @@ public class Instruction {
 	public static final short FUNCT_SRA = 0x03;
 	// J-format target
 	public static final short OPCODE_J = 0x02;
+	// J-format rs
+	public static final short FUNCT_JR = 0x08;
 
 	private short opcode = 0;
 	private short funct = 0;
-	private short shamt = 0;
-	private short label = 0;
-	private short adress = 0;
 	private short rd = 0;
 	private short rs = 0;
 	private short rt = 0;
-	private short imm = 0;
+	private short offset = 0;
 
+	private boolean isRd = false;
+	private boolean isRt = false;
+	private boolean isRs = false;
+	
 	private boolean r_type = false;
 	private boolean j_type = false;
 	private boolean i_type = false;
@@ -135,47 +137,54 @@ public class Instruction {
 				rd = parseReg(t1);
 				rs = parseReg(t2);
 				rt = parseReg(t3);
+				isRd = true;
+				isRt = true;
+				isRs = true;
 			}
 			else if(i_type){
 				if(opcode == OPCODE_LW || opcode == OPCODE_SW){
 					//Here t3 should be empty
 					rt = parseReg(t1);
-					if((t2.indexOf('(')!= -1) && t2.contains("x")){
+					isRt = true;
+					if((t2.indexOf('(')!= -1)){
 						rs = parseReg(t2.substring(t2.indexOf('(')+1, t2.indexOf(')')));
-						adress = parseAddr(t2.substring(0, t2.indexOf('(')));
-					}
-					else if(t2.indexOf('(')!= -1){
-						rs = parseReg(t2.substring(t2.indexOf('(')+1, t2.indexOf(')')));
+						isRs = true;
+						offset = parseAddr(t2.substring(0, t2.indexOf('(')));
 					}
 					else{
-						adress = parseAddr(t2);
-					}
-					
-						
+						rs = parseReg(t2);
+					}	
 				}
 				else if(opcode == OPCODE_ADDI || opcode == OPCODE_ORI){
 					rt = parseReg(t1);
 					rs = parseReg(t2);
-					imm = parseAddr(t3);
+					isRt = true;
+					isRs = true;
+					offset = parseAddr(t3);
 				}
 				else if(funct == FUNCT_SRL || funct == FUNCT_SRA){
 					rd = parseReg(t1);
 					rt = parseReg(t2);
-					shamt = parseAddr(t3);
+					isRd = true;
+					isRt = true;
+					offset = parseAddr(t3);
 					
 				}
 				else if(opcode == OPCODE_BEQ){
 					rs = parseReg(t1);
 					rt = parseReg(t2);
-					label = parseAddr(t3);
+					isRs = true;
+					isRt = true;
+					offset = parseAddr(t3);
 				}
 			}
 			else if(j_type){
 				if(funct == FUNCT_JR){
 					rs = parseReg(t1);
+					isRs = true;
 				}
 				else if(opcode == OPCODE_J){
-					adress = parseReg(t1);
+					offset = parseReg(t1);
 				}
 			}
 	}
@@ -241,14 +250,8 @@ public class Instruction {
 	public short getFunct(){
 		return funct;
 	}
-	public short getShamt(){
-		return shamt;
-	}
-	public short getLabel(){
-		return label;
-	}
-	public short getAddress(){
-		return adress;
+	public short getOffset(){
+		return offset;
 	}
 	public short getRd(){
 		return rd;
@@ -258,9 +261,6 @@ public class Instruction {
 	}
 	public short getRt(){
 		return rt;
-	}
-	public short getImm(){
-		return imm;
 	}
 	public char getType(){
 		if(r_type){
@@ -284,5 +284,14 @@ public class Instruction {
 		return is_nop;
 	}
 
+	public boolean getIsRd(){
+		return isRd;
+	}
 	
+	public boolean getIsRt(){
+		return isRt;
+	}
+	public boolean getIsRs(){
+		return isRs;
+	}
 }
