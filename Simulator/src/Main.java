@@ -5,6 +5,8 @@ public class Main {
 	private static Instruction instruction;
 	private static Control control;
 	private static ALUControl ALUControl;
+	private static Registers registers;
+	private static ALU alu;
 	
 	public static void main(String[] args) throws Exception {
 		
@@ -12,6 +14,11 @@ public class Main {
 		short ALUOp1 = 0;
 		short ALUOp0 = 0;
 		short ALUControlInp = 0;
+		int reg1 = -1;
+		int reg2 = -1;
+		int ALURes = -1;
+		int ALUZero = 0;
+		int writeReg = 0;
 		BufferedReader br = null;
 		br = new BufferedReader(new FileReader("instructions.txt"));
 
@@ -19,11 +26,27 @@ public class Main {
 		String line = br.readLine();
 		    
 		while (line != null) {
+			//Parse instruction
 			instruction = new Instruction(line);
 			System.out.println("INSTRUCTION: " + line);
 			printStuff(instruction);
+			//Set control lines
 			control = new Control(instruction);
 			
+			//Create registers and fill them
+			registers = new Registers();
+			
+			if(!control.getJump()){
+				writeReg = mux(instruction.getRt(), instruction.getRd(), control.getRegDst());
+				reg1 = registers.readReg(instruction.getRs());
+				reg2 = mux(registers.readReg(instruction.getRt()), instruction.getOffset() ,control.getALUSrc());
+				
+			}else{
+				
+			}
+			
+	
+			//Get variabels for ALU Control
 			ALUOpCode = control.getALUOp0();
 			if(ALUOpCode == false){
 				ALUOp0 = 0;
@@ -34,12 +57,27 @@ public class Main {
 				ALUOp1 = 0;
 			}else ALUOp1 = 1;
 			
+			//Run ALU Control
 			ALUControl = new ALUControl();
 			ALUControlInp = ALUControl.getALUControlInput(ALUOp1, ALUOp0, instruction.getFunct());
 			System.out.println("ALU Control Input = " + ALUControlInp);
 			boolean memToReg = control.getMemtoReg();
 			System.out.println("MemToReg: " + memToReg);
-					
+			
+			//Run ALU
+			alu = new ALU();
+			alu.doInstruction(ALUControlInp, reg1, reg2);
+			ALURes = alu.getResult();
+			ALUZero = alu.getZero();
+			System.out.println("ALU Output: " + ALURes);
+			System.out.println("ALU Zero: " + ALUZero);
+			
+			//Set WriteData register if R type
+			if(instruction.getType() == 'r'){
+				registers.writeReg(instruction.getRd(), ALURes);
+			}
+			System.out.println("Write Data register: " + registers.readReg(instruction.getRd()));
+			//Change line from file
 		 	sb.append(line);
 		    sb.append(System.lineSeparator());
 		    line = br.readLine();
@@ -49,16 +87,22 @@ public class Main {
 
 	}
 	
+	public static int mux(int val1, int val2, boolean chooseVal2){
+		if(chooseVal2){
+			return val2;
+		}else{
+			return val1;
+		}
+	}
+	
 	public static void printStuff(Instruction instruction){
 		short opcode = 0;
 		short funct = 0;
-		short shamt = 0;
-		short label = 0;
-		short adress = 0;
+		short offset = 0;
 		short rd = 0;
 		short rs = 0;
 		short rt = 0;
-		short imm = 0;
+
 
 		char type;
 
@@ -67,13 +111,11 @@ public class Main {
 		
 		opcode = instruction.getOpcode();
 		funct = instruction.getFunct();
-		shamt = instruction.getShamt();
-		label = instruction.getLabel();
-		adress = instruction.getAddress();
+		offset= instruction.getOffset();
 		rd = instruction.getRd();
 		rs = instruction.getRs();
 		rt = instruction.getRt();
-		imm = instruction.getImm();
+
 
 		type = instruction.getType();
 
@@ -95,17 +137,8 @@ public class Main {
 		if(funct != 0){
 			System.out.println("Funct: " + funct);
 		}
-		if(shamt != 0){
-			System.out.println("Shamt: " + shamt);
-		}
-		if(label != 0){
-			System.out.println("Label: " + label);
-		}
-		if(adress != 0){
-			System.out.println("Address: " + adress);
-		}
-		if(imm != 0){
-			System.out.println("Imm: " + imm);
+		if(offset != 0){
+			System.out.println("Offset: " + offset);
 		}
 		if(is_exit){
 			System.out.println("Is exit!");
