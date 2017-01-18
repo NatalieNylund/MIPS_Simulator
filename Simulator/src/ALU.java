@@ -11,7 +11,6 @@ public class ALU {
 	private short NOR = 12;
 	
 	private int ALUResult;
-	private int zero = 0;
 	
 	public ALU(){
 		
@@ -21,35 +20,38 @@ public class ALU {
 	 * what instruction to perform, then uses the given register
 	 * values to perform that instruction upon.
 	 */
-	public int doInstruction(short input, int read1, int read2){
+	public void doInstruction(short input, int reg1, int reg2){
 		
 		if(input == AND){
-			ALUResult = read1 & read2;
-			return ALUResult;
+			ALUResult = reg1 & reg2;
+
 		}else if(input == OR){
-			ALUResult = read1 | read2;
-			return ALUResult;
+			ALUResult = reg1 | reg2;
+
 		}else if(input == ADD){
-			ALUResult = read1 + read2;
-			return ALUResult;
+			ALUResult = reg1 + reg2;
+
 		}else if(input == SUB){
-			ALUResult = read1 - read2;
-			return ALUResult;
+			ALUResult = reg1 - reg2;
+
 		}else if(input == SLT){
-			ALUResult = read1 < read2 ? 1 : 0;
-			return ALUResult;
+			ALUResult = reg1 < reg2 ? 1 : 0;
+
 		}else if(input == NOR){
-			ALUResult = ~(read1 | read2);
-			return ALUResult;
-		}else return -1;
+			ALUResult = ~(reg1 | reg2);
+		}else ALUResult = -1;
 		
+	}
+
+	public int getResult(){
+		return ALUResult;
 	}
 	
 	public int getZero(){
 		
 		if(ALUResult == 0){
-			return zero = 0;
+			return 1;
 		}
-		else return zero;
+		else return 0;
 	}
 }
