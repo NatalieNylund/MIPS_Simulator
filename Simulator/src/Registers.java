@@ -1,10 +1,10 @@
 
 public class Registers {
-	private byte[] registers;
+	private int[] registers;
 	String[] names;
 	
 	public Registers() {
-		registers = new byte[32];
+		registers = new int[32];
 		names = new String[]{"$zero",
 					"$at",
 					"$v0",
@@ -46,22 +46,22 @@ public class Registers {
 		}
 	}
 
-	private byte get(int addr) {
+	private int get(int addr) {
 		return registers[addr];
 	}
 
-	private void set(int addr, byte val) {
+	private void set(int addr, int val) {
 			registers[addr] = val;
 	}
 
-	public byte readReg(int addr) {
+	public int readReg(int addr) {
 		if(addr <= 32) {
 			return get(addr);
 		}
 		return -1;
 	}
 
-	public void writeReg(int addr, byte data) {
+	public void writeReg(int addr, int data) {
 		/* There are only 32 registers and address 0 is $zero register */
 		if((addr <= 32) && (addr != 0)) {
 			set(addr, data);
