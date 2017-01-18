@@ -9,7 +9,7 @@ public class Processor {
 	
 	public Processor(){
 		//pc = new PC();
-		instructions = new InstructionMemory();
+		//instructions = new InstructionMemory();
 		//register = new Registers();
 		//alu = new ALU();
 		//memory = new DataMemory();

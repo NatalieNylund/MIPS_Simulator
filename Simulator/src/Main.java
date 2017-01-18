@@ -24,7 +24,7 @@ public class Main {
 
 		StringBuilder sb = new StringBuilder();
 		String line = br.readLine();
-		    
+
 		while (line != null) {
 			//Parse instruction
 			instruction = new Instruction(line);
