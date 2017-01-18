@@ -8,4 +8,5 @@ and $t0, $t1, $t2
 or $t3, $t4, $t5
 nor $t6, $t7, $s0
 slt $s1, $s2, $s3
-sw $gp, 4($ra)
+add $gp, $t0, $t1
+sw $gp, 0x0020
