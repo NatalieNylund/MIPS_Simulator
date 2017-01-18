@@ -31,8 +31,8 @@ public class MipsSimulator {
 		    
 		    while(line != null) {
 		    	if(line.trim().length() != 0) {
-		    		Instruction instruction = new Instruction(line);
-					instructions.add(instruction);
+		    		//Instruction instruction = new Instruction(line);
+					//instructions.add(instruction);
 		    	}
 		        line = br.readLine();
 		    }
