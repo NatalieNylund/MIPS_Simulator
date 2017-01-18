@@ -19,6 +19,7 @@ public class Translator {
 	 * 			if selected string is not supported:
 	 *  		{original string, error message}
 	 */
+	/*
 	public String[] translate(String str){
 		String[] resultData = new String[5];
 		resultData[0] = str;
@@ -87,7 +88,7 @@ public class Translator {
 		resultData[3] = hexForm;
 		
 		return resultData;
-	}
+	} */
 	
 	/**
 	 * Reformats a selected string (instruction on 32-bit hexadecimal form)
