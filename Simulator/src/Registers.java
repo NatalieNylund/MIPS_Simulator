@@ -55,15 +55,15 @@ public class Registers {
 	}
 
 	public int readReg(int addr) {
-		if(addr <= 32) {
+		if(addr <= 31) {
 			return get(addr);
 		}
 		return -1;
 	}
 
 	public void writeReg(int addr, int data) {
-		/* There are only 32 registers and address 0 is $zero register */
-		if((addr <= 32) && (addr != 0)) {
+		/* Check if register is available */
+		if(((addr < 26) || (addr) > 27) && (addr < 32) && (addr != 0) && (addr != 1)) {
 			set(addr, data);
 		}
 	}
