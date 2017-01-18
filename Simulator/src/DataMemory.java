@@ -1,9 +1,9 @@
 
 public class DataMemory {
-	private byte[] data;
+	private int[] data;
 
 	public DataMemory(){
-		data = new byte[1000];
+		data = new int[1000];
 		reset();
 	}
 
@@ -13,19 +13,19 @@ public class DataMemory {
         }
     }
 
-    public byte readMemory(int addr) {
+    public int readMemory(int addr) {
 	    return get(addr);
     }
 
-    public void writeMemory(int addr, byte data) {
+    public void writeMemory(int addr, int data) {
 	    set(addr, data);
     }
 
-	private byte get(int addr) {
+	private int get(int addr) {
 	    return data[addr];
     }
 
-    private void set(int addr, byte val) {
+    private void set(int addr, int val) {
 	    data[addr] = val;
     }
 }
