@@ -17,7 +17,7 @@ public class Main {
 
 		StringBuilder sb = new StringBuilder();
 		String line = br.readLine();
-		    
+
 		while (line != null) {
 			instruction = new Instruction(line);
 			System.out.println("INSTRUCTION: " + line);
