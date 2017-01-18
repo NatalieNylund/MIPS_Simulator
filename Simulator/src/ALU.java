@@ -11,6 +11,7 @@ public class ALU {
 	private short NOR = 12;
 	
 	private int ALUResult;
+	private int ALUZero = 0;
 	
 	public ALU(){
 		
@@ -26,13 +27,16 @@ public class ALU {
 			ALUResult = reg1 & reg2;
 
 		}else if(input == OR){
-			ALUResult = reg1 | reg2;
+			ALUResult = (reg1 | reg2);
 
 		}else if(input == ADD){
 			ALUResult = reg1 + reg2;
 
 		}else if(input == SUB){
 			ALUResult = reg1 - reg2;
+			if(ALUResult == 0){
+				ALUZero = 1;
+			}
 
 		}else if(input == SLT){
 			ALUResult = reg1 < reg2 ? 1 : 0;
@@ -48,10 +52,6 @@ public class ALU {
 	}
 	
 	public int getZero(){
-		
-		if(ALUResult == 0){
-			return 1;
-		}
-		else return 0;
+		return ALUZero;
 	}
 }
