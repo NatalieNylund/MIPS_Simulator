@@ -7,6 +7,7 @@ public class Main {
 	private static ALUControl ALUControl;
 	private static Registers registers;
 	private static ALU alu;
+	private static DataMemory dataMem;
 	
 	public static void main(String[] args) throws Exception {
 		
@@ -19,6 +20,7 @@ public class Main {
 		int ALURes = -1;
 		int ALUZero = 0;
 		int writeReg = 0;
+		int writeData = 0;
 		BufferedReader br = null;
 		br = new BufferedReader(new FileReader("instructions.txt"));
 
@@ -72,10 +74,24 @@ public class Main {
 			System.out.println("ALU Output: " + ALURes);
 			System.out.println("ALU Zero: " + ALUZero);
 			
-			//Set WriteData register if R type
-			if(instruction.getType() == 'r'){
-				registers.writeReg(instruction.getRd(), ALURes);
+			dataMem = new DataMemory();
+			
+			if(control.getMemRead()){
+				writeData = dataMem.readMemory(ALURes);
+				registers.writeReg(writeReg, writeData);
+			}else if(control.getMemWrite()){
+				dataMem.writeMemory(ALURes, reg1);
+				System.out.println("Stored stuff: " + dataMem.readMemory(ALURes));
 			}
+			
+			if(!control.getMemWrite()){
+				writeData = mux(ALURes, writeData, control.getMemtoReg());
+				registers.writeReg(writeReg, writeData);
+			}
+			
+			
+			
+			
 			System.out.println("Write Data register: " + registers.readReg(instruction.getRd()));
 			//Change line from file
 		 	sb.append(line);
