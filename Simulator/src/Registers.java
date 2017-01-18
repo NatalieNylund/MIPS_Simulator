@@ -69,7 +69,7 @@ public class Registers {
 	}
 
 	public String getName(int i) {
-		if(i <= 32) {
+		if(i <= 31) {
 			return names[i];
 		}
 		return null;
