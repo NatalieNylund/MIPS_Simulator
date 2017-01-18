@@ -152,7 +152,11 @@ public class Instruction {
 						offset = parseAddr(t2.substring(0, t2.indexOf('(')));
 					}
 					else{
-						rs = parseReg(t2);
+						if(t2.contains("$")){
+							rs = parseReg(t2);
+						}else{
+							offset = parseAddr(t2);
+						}
 					}	
 				}
 				else if(opcode == OPCODE_ADDI || opcode == OPCODE_ORI){
