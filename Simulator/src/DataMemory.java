@@ -13,12 +13,17 @@ public class DataMemory {
         }
     }
 
-    public int readMemory(int addr) {
-	    return get(addr);
+    public int readMemory(int addr, boolean MemRead) {
+		if(MemRead) {
+			return get(addr);
+		}
+		return -1;
     }
 
-    public void writeMemory(int addr, int data) {
-	    set(addr, data);
+    public void writeMemory(int addr, int data, boolean MemWrite) {
+		if(MemWrite) {
+			set(addr, data);
+		}
     }
 
 	private int get(int addr) {
