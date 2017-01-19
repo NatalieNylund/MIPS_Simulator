@@ -81,11 +81,10 @@ public class Main {
 			dataMem.writeMemory(ALURes, reg1, control.getMemWrite());
 			System.out.println("Stored stuff: " + dataMem.readMemory(ALURes, control.getMemRead()));
 
-			
-			if(!control.getMemWrite()){
-				writeData = mux(ALURes, writeData, control.getMemtoReg());
-				registers.writeReg(writeReg, writeData, control.getRegWrite());
-			}
+
+			writeData = mux(ALURes, writeData, control.getMemtoReg());
+			registers.writeReg(writeReg, writeData, control.getRegWrite());
+
 
 			
 			System.out.println("Write Data register: " + registers.readReg(instruction.getRd()));
