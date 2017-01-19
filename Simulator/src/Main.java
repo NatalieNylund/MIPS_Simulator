@@ -75,22 +75,18 @@ public class Main {
 			System.out.println("ALU Zero: " + ALUZero);
 			
 			dataMem = new DataMemory();
-			
-			if(control.getMemRead()){
-				writeData = dataMem.readMemory(ALURes);
-				registers.writeReg(writeReg, writeData);
-			}else if(control.getMemWrite()){
-				dataMem.writeMemory(ALURes, reg1);
-				System.out.println("Stored stuff: " + dataMem.readMemory(ALURes));
-			}
+
+			writeData = dataMem.readMemory(ALURes, control.getMemRead());
+			registers.writeReg(writeReg, writeData, control.getRegWrite());
+			dataMem.writeMemory(ALURes, reg1, control.getMemWrite());
+			System.out.println("Stored stuff: " + dataMem.readMemory(ALURes, control.getMemRead()));
+
 			
 			if(!control.getMemWrite()){
 				writeData = mux(ALURes, writeData, control.getMemtoReg());
-				registers.writeReg(writeReg, writeData);
+				registers.writeReg(writeReg, writeData, control.getRegWrite());
 			}
-			
-			
-			
+
 			
 			System.out.println("Write Data register: " + registers.readReg(instruction.getRd()));
 			//Change line from file
