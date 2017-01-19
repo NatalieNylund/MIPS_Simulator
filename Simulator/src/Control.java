@@ -15,6 +15,7 @@ public class Control {
 	private boolean ALUSrc;
 	private boolean RegWrite;
 	private boolean Jump;
+	private boolean JumpReg;
 	
 	public Control(Instruction instr){
 		setControlLines(instr);
@@ -48,24 +49,42 @@ public class Control {
 			setALUSrc(true);
 			setMemWrite(true);
 		}
-		/* If R format */
-		else if(instr.getType() == 'r') {
-			setRegDst(true);
-			setRegWrite(true);
+		/* If j */
+		else if(instr.getOpcode() == 0x02) {
+			setJump(true);
+		}
+		/* If op code 0 - R operation or jr */
+		else if(instr.getOpcode() == 0x00) {
+			/* If R format */
+			if(instr.getType() == 'r') {
+				setRegDst(true);
+				setRegWrite(true);
+				setALUOp1(true);
+
+				/* If jr */
+			} else if(instr.getFunct() == 0x08) {
+				setJump(true);
+				setJumpReg(true);
+
+				/* If sra or srl */
+			} else if((instr.getFunct() == 0x03) || (instr.getFunct() == 0x02)) {
+				setRegWrite(true);
+				setALUSrc(true);
+				setALUOp1(true);
+			}
+
+
+		}
+		/* If ori */
+		else if(instr.getOpcode() == 0x0D) {
+			setALUOp0(true);
 			setALUOp1(true);
 		}
-		/* If I format */
-		else if(instr.getType() == 'i') {
+		/* If addi */
+		else if(instr.getOpcode() == 0x08) {
 			setRegWrite(true);
 			setALUSrc(true);
-			//ALUOp
 		}
-		/* If J format */
-		else if(instr.getType() == 'j') {
-			setJump(true);
-			//ALUOp?
-		}
-
 	}
 	
 	public void update(Instruction instr) {
@@ -151,6 +170,15 @@ public class Control {
 	public Boolean getJump(){
 		return Jump;
 	}
-	
-	
+
+	private void setJumpReg(boolean val){
+		JumpReg = val;
+	}
+
+	public Boolean getJumpReg(){
+		return JumpReg;
+	}
+
+
+
 }
