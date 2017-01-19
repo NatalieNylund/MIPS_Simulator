@@ -61,10 +61,12 @@ public class Registers {
 		return -1;
 	}
 
-	public void writeReg(int addr, int data) {
-		/* Check if register is available */
-		if(((addr < 26) || (addr) > 27) && (addr < 32) && (addr != 0) && (addr != 1)) {
-			set(addr, data);
+	public void writeReg(int addr, int data, boolean RegWrite) {
+		if(RegWrite) {
+			/* Check if register is available */
+			if(((addr < 26) || (addr) > 27) && (addr < 32) && (addr != 0) && (addr != 1)) {
+				set(addr, data);
+			}
 		}
 	}
 
