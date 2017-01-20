@@ -11,3 +11,5 @@ slt $s1, $s2, $s3
 add $gp, $t0, $t1
 sw $gp, 0x0020
 lw $v0, 0x0020
+lw $v1, 0x0020
+j
