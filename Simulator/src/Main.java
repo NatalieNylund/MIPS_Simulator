@@ -1,7 +1,9 @@
 import java.io.*;
+import java.util.ArrayList;
 
 public class Main {
 
+	private static InstructionMemory instrMem;
 	private static Instruction instruction;
 	private static Control control;
 	private static ALUControl ALUControl;
@@ -23,11 +25,9 @@ public class Main {
 		int writeData = 0;
 		BufferedReader br = null;
 		br = new BufferedReader(new FileReader("Simulator/instructions.txt"));
+		ArrayList<Instruction> instrList = new ArrayList<Instruction>();
 
-		StringBuilder sb = new StringBuilder();
-		String line = br.readLine();
-
-		//Create registers and fill them
+		//Create registers and fill them with zeros
 		registers = new Registers();
 		alu = new ALU();
 		ALUControl = new ALUControl();
@@ -35,12 +35,33 @@ public class Main {
 		pc = new PC();
 		addUnit = new ADD();
 
-		while (line != null) {
+		//Get instructions from file
+		String line = br.readLine();
+
+		while(line != null) {
+			line = line.trim();
+
+			if((line.length() != 0) && (line.length() > 1)) {
+				instrList.add(new Instruction(line));
+			}
+
+			//Change line from file
+			line = br.readLine();
+		}
+
+		//Save instructions in instruction memory
+		instrMem = new InstructionMemory(instrList);
+
+		//Fetch and parse first instruction
+		getNextInstruction();
+
+		while (instruction != null) {
+			System.out.println("INSTRUCTION: " + instruction.getInstrStr());
+
+			System.out.println("pc before: " + pc.get());
+
 			//Compute new value for program counter
 			int pcCount = addUnit.addition(pc.get(), 4);
-
-			//Parse the current instruction
-			parseInstruction(line);
 
 			//Check what register to write to
 			writeReg = mux(instruction.getRt(), instruction.getRd(), control.getRegDst());
@@ -58,8 +79,6 @@ public class Main {
 			alu.doInstruction(ALUControlInp, reg1, reg2);
 			ALURes = alu.getResult();
 			ALUZero = alu.getZero();
-			System.out.println("ALU Output: " + ALURes);
-			System.out.println("ALU Zero: " + ALUZero);
 
 			//Compute branch address
 			int branchAddr = addUnit.addition(pcCount, (instruction.getOffset() << 2));
@@ -92,12 +111,11 @@ public class Main {
 			//Update program counter
 			pc.set(pcCount);
 
-			//Change line from file
-		 	sb.append(line);
-		    sb.append(System.lineSeparator());
+			//Fetch and parse next instruction
+			getNextInstruction();
 
-		    line = br.readLine();
-		    System.out.println();
+			System.out.println("pc after: " + pc.get());
+			System.out.println();
 		}   
 		br.close();
 
@@ -165,13 +183,15 @@ public class Main {
 
 	}
 
-	private static void parseInstruction(String line) throws Exception {
-		//Parse instruction
-		instruction = new Instruction(line);
-		System.out.println("INSTRUCTION: " + line);
-		printStuff(instruction);
-		//Set control lines
-		control = new Control(instruction);
+	private static void getNextInstruction() throws Exception {
+		//Fetch instruction
+		instruction = instrMem.fetch(pc.get());
+
+		if(instruction != null) {
+			printStuff(instruction);
+			//Set control lines
+			control = new Control(instruction);
+		}
 	}
 
 	private static short runALUControl() {
@@ -195,7 +215,6 @@ public class Main {
 		ALUControlInp = ALUControl.getALUControlInput(ALUOp1, ALUOp0, instruction.getFunct());
 		System.out.println("ALU Control Input = " + ALUControlInp);
 		boolean memToReg = control.getMemtoReg();
-		System.out.println("MemWrite: " +  control.getMemWrite());
 
 		return ALUControlInp;
 	}
