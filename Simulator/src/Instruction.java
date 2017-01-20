@@ -4,7 +4,7 @@ import java.util.*;
  * This class takes a line of an instruction and parses it 
  * to parameters depending of the instruction.
  * Input: String line, a line with an instruction
- * Output: short, boolean, parameters set based on instruction
+ * Output: short, boolean, parameters addition based on instruction
  */
 
 public class Instruction {

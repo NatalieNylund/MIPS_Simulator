@@ -8,12 +8,12 @@ public class Main {
 	private static Registers registers;
 	private static ALU alu;
 	private static DataMemory dataMem;
+	private static PC pc;
+	private static ADD addUnit;
 	
 	public static void main(String[] args) throws Exception {
 		
-		boolean ALUOpCode = false;
-		short ALUOp1 = 0;
-		short ALUOp0 = 0;
+
 		short ALUControlInp = 0;
 		int reg1 = -1;
 		int reg2 = -1;
@@ -22,80 +22,80 @@ public class Main {
 		int writeReg = 0;
 		int writeData = 0;
 		BufferedReader br = null;
-		br = new BufferedReader(new FileReader("instructions.txt"));
+		br = new BufferedReader(new FileReader("Simulator/instructions.txt"));
 
 		StringBuilder sb = new StringBuilder();
 		String line = br.readLine();
 
+		//Create registers and fill them
+		registers = new Registers();
+		alu = new ALU();
+		ALUControl = new ALUControl();
+		dataMem = new DataMemory();
+		pc = new PC();
+		addUnit = new ADD();
+
 		while (line != null) {
-			//Parse instruction
-			instruction = new Instruction(line);
-			System.out.println("INSTRUCTION: " + line);
-			printStuff(instruction);
-			//Set control lines
-			control = new Control(instruction);
-			
-			//Create registers and fill them
-			registers = new Registers();
-			
-			if(!control.getJump()){
-				writeReg = mux(instruction.getRt(), instruction.getRd(), control.getRegDst());
-				reg1 = registers.readReg(instruction.getRs());
-				reg2 = mux(registers.readReg(instruction.getRt()), instruction.getOffset() ,control.getALUSrc());
-				
-			}else{
-				
-			}
-			
-	
-			//Get variabels for ALU Control
-			ALUOpCode = control.getALUOp0();
-			if(ALUOpCode == false){
-				ALUOp0 = 0;
-			}else ALUOp0 = 1;
-			
-			ALUOpCode = control.getALUOp1();
-			if(ALUOpCode == false){
-				ALUOp1 = 0;
-			}else ALUOp1 = 1;
-			
-			//Run ALU Control
-			ALUControl = new ALUControl();
-			ALUControlInp = ALUControl.getALUControlInput(ALUOp1, ALUOp0, instruction.getFunct());
-			System.out.println("ALU Control Input = " + ALUControlInp);
-			boolean memToReg = control.getMemtoReg();
-			System.out.println("MemToReg: " + memToReg);
+			//Compute new value for program counter
+			int pcCount = addUnit.addition(pc.get(), 4);
+
+			//Parse the current instruction
+			parseInstruction(line);
+
+			//Check what register to write to
+			writeReg = mux(instruction.getRt(), instruction.getRd(), control.getRegDst());
+
+			//Read register RS
+			reg1 = registers.readReg(instruction.getRs());
+
+			//Check what register to read from
+			reg2 = mux(registers.readReg(instruction.getRt()), instruction.getOffset() ,control.getALUSrc());
+
+			//Run the ALU control
+			ALUControlInp = runALUControl();
 			
 			//Run ALU
-			alu = new ALU();
 			alu.doInstruction(ALUControlInp, reg1, reg2);
 			ALURes = alu.getResult();
 			ALUZero = alu.getZero();
 			System.out.println("ALU Output: " + ALURes);
 			System.out.println("ALU Zero: " + ALUZero);
-			
-			dataMem = new DataMemory();
-			
-			if(control.getMemRead()){
-				writeData = dataMem.readMemory(ALURes);
-				registers.writeReg(writeReg, writeData);
-			}else if(control.getMemWrite()){
-				dataMem.writeMemory(ALURes, reg1);
-				System.out.println("Stored stuff: " + dataMem.readMemory(ALURes));
-			}
-			
-			if(!control.getMemWrite()){
-				writeData = mux(ALURes, writeData, control.getMemtoReg());
-				registers.writeReg(writeReg, writeData);
-			}
-			
-			
-			
-			
-			System.out.println("Write Data register: " + registers.readReg(instruction.getRd()));
+
+			//Compute branch address
+			int branchAddr = addUnit.addition(pcCount, (instruction.getOffset() << 2));
+
+			//Check if branch
+			pcCount = mux(pcCount, branchAddr, (control.getBranch() && (ALUZero == 1)));
+
+			//Compute jump address
+			int jmpAddr = instruction.getOffset() << 2;
+			int upperBits = (pcCount >> 28);
+			jmpAddr = (upperBits << 28) | jmpAddr;
+
+			jmpAddr = mux(jmpAddr, reg1, control.getJumpReg());
+
+			//Check if jump
+			pcCount = mux(pcCount, jmpAddr, control.getJump());
+
+			//Read data memory
+			writeData = dataMem.readMemory(ALURes, control.getMemRead());
+
+			//Write to data memory
+			dataMem.writeMemory(ALURes, registers.readReg(instruction.getRt()), control.getMemWrite());
+
+			//Check which data to use
+			writeData = mux(ALURes, writeData, control.getMemtoReg());
+
+			//Write to register
+			registers.writeReg(writeReg, writeData, control.getRegWrite());
+
+			//Update program counter
+			pc.set(pcCount);
+
 			//Change line from file
 		 	sb.append(line);
 		    sb.append(System.lineSeparator());
+
 		    line = br.readLine();
 		    System.out.println();
 		}   
@@ -161,10 +161,44 @@ public class Main {
 		}
 		if(is_nop){
 			System.out.println("Is nop!");
-		}		
+		}
 
 	}
 
+	private static void parseInstruction(String line) throws Exception {
+		//Parse instruction
+		instruction = new Instruction(line);
+		System.out.println("INSTRUCTION: " + line);
+		printStuff(instruction);
+		//Set control lines
+		control = new Control(instruction);
+	}
+
+	private static short runALUControl() {
+		boolean ALUOpCode = false;
+		short ALUOp1 = 0;
+		short ALUOp0 = 0;
+		short ALUControlInp = 0;
+
+		//Get variabels for ALU Control
+		ALUOpCode = control.getALUOp0();
+		if(ALUOpCode == false){
+			ALUOp0 = 0;
+		}else ALUOp0 = 1;
+
+		ALUOpCode = control.getALUOp1();
+		if(ALUOpCode == false){
+			ALUOp1 = 0;
+		}else ALUOp1 = 1;
+
+		//Run ALU Control
+		ALUControlInp = ALUControl.getALUControlInput(ALUOp1, ALUOp0, instruction.getFunct());
+		System.out.println("ALU Control Input = " + ALUControlInp);
+		boolean memToReg = control.getMemtoReg();
+		System.out.println("MemWrite: " +  control.getMemWrite());
+
+		return ALUControlInp;
+	}
 }
 
 

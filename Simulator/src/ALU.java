@@ -9,6 +9,8 @@ public class ALU {
 	private short SUB = 6;
 	private short SLT = 7;
 	private short NOR = 12;
+	private short SRL = 3;
+	private short SRA = 4;
 	
 	private int ALUResult;
 	private int ALUZero = 0;
@@ -43,7 +45,12 @@ public class ALU {
 
 		}else if(input == NOR){
 			ALUResult = ~(reg1 | reg2);
-		}else ALUResult = -1;
+		} else if(input == SRL) {
+			ALUResult = reg1 >>> reg2;
+		} else if(input == SRA) {
+			ALUResult = reg1 >> reg2;
+		}
+		else ALUResult = -1;
 		
 	}
 

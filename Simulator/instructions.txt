@@ -10,3 +10,4 @@ nor $t6, $t7, $s0
 slt $s1, $s2, $s3
 add $gp, $t0, $t1
 sw $gp, 0x0020
+lw $v0, 0x0020
