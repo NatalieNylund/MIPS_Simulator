@@ -7,6 +7,7 @@ import java.util.ArrayList;
 public class InstructionMemory {
 	private int op;
 	private Instruction[] instructions;
+	private int numOfInstr;
 
 	/**
 	 *
@@ -14,9 +15,11 @@ public class InstructionMemory {
 	 */
 	public InstructionMemory(ArrayList<Instruction> instrList) {
 		instructions = new Instruction[instrList.size()];
+		numOfInstr = 0;
 
 		for(int i = 0; i < instrList.size(); i++) {
 			instructions[i] = instrList.get(i);
+			numOfInstr++;
 		}
 	}
 
@@ -28,7 +31,11 @@ public class InstructionMemory {
 	 */
 	public Instruction fetch(int pc) {
 		/* Divide program counter by 4 because each element in the array represents 4 bytes */
-		return instructions[pc/4];
+		if((pc/4) < numOfInstr) {
+			return instructions[pc/4];
+		} else {
+			return null;
+		}
 	}
 
 }
