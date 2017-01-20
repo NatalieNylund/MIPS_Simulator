@@ -1,15 +1,22 @@
 ﻿
-lw $t8, 0x50($t9)
-lw $v0, 0x0020
-add $t0, $t1, $t2 
-sub $s0, $t0, $v0
+addi $t0, $t0, 3
+addi $t1, $t8, 4
+add $t3, $t1, $t0
+sub $t4, $t1, $t0
+nop
+sw $t0, 0x0020
+lw $t5, 0x0020
+and $t6, $t1, $t3
+or $t2, $t1, $t3
+nor $t3, $t1, $t3
+slt $t7, $t0, $t1
+sra $t7, $t0, 0x01
+srl $t7, $t0, 0x01
 beq $sp, $fp, 0x01
-and $t0, $t1, $t2
-or $t3, $t4, $t5
-nor $t6, $t7, $s0
-slt $s1, $s2, $s3
-add $gp, $t0, $t1
-sw $gp, 0x0020
-lw $v0, 0x0020
-lw $v1, 0x0020
-j
+nop
+j 18
+nop
+nop
+nop
+
+
