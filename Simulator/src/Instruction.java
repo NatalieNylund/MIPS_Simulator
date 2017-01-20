@@ -51,9 +51,12 @@ public class Instruction {
 	private boolean is_exit;
 	private boolean is_nop;
 
+	private String instrStr;
+
 	
 	public Instruction(String line) throws Exception {
-			
+			instrStr = line;
+
 			line = line.replaceAll(",", "");
 			StringTokenizer tokens = new StringTokenizer(line, " ");
 			String op = "", t1 = "", t2 = "", t3 = "";
@@ -297,5 +300,9 @@ public class Instruction {
 	}
 	public boolean getIsRs(){
 		return isRs;
+	}
+
+	public String getInstrStr() {
+		return instrStr;
 	}
 }
