@@ -1,5 +1,5 @@
 import java.io.*;
-import java.util.ArrayList;
+import java.util.*;
 
 public class Main {
 
@@ -15,7 +15,9 @@ public class Main {
 	
 	public static void main(String[] args) throws Exception {
 		
-
+		List<Integer> registerList = new ArrayList<Integer>();
+		List<Integer> dataMemoryList = new ArrayList<Integer>();
+		
 		short ALUControlInp = 0;
 		int reg1 = -1;
 		int reg2 = -1;
@@ -24,7 +26,7 @@ public class Main {
 		int writeReg = 0;
 		int writeData = 0;
 		BufferedReader br = null;
-		br = new BufferedReader(new FileReader("Simulator/instructions.txt"));
+		br = new BufferedReader(new FileReader("instructions.txt"));
 		ArrayList<Instruction> instrList = new ArrayList<Instruction>();
 
 		//Create registers and fill them with zeros
@@ -101,15 +103,29 @@ public class Main {
 
 			//Write to data memory
 			dataMem.writeMemory(ALURes, registers.readReg(instruction.getRt()), control.getMemWrite());
-
+			//Set which adress at data memory that has been changed
+			if(control.getMemWrite() && !dataMemoryList.contains(registers.readReg(instruction.getRt()))){
+				dataMemoryList.add(registers.readReg(instruction.getRt()));
+				Collections.sort(dataMemoryList);
+			}
+			
 			//Check which data to use
 			writeData = mux(ALURes, writeData, control.getMemtoReg());
 
 			//Write to register
 			registers.writeReg(writeReg, writeData, control.getRegWrite());
-
+			//Set what register has been changed
+			if(control.getRegWrite() && !registerList.contains(writeReg)){
+				registerList.add(writeReg);
+				Collections.sort(registerList);
+			}
+			
 			//Update program counter
 			pc.set(pcCount);
+			System.out.println("PROGRAM COUNTER CURRENT: " + pc.get());
+			
+			printRegisters(registers, registerList);
+			printDataMemory(dataMem, dataMemoryList);
 
 			//Fetch and parse next instruction
 			getNextInstruction();
@@ -187,7 +203,7 @@ public class Main {
 		//Fetch instruction
 		instruction = instrMem.fetch(pc.get());
 
-		if(instruction != null) {
+		if (instruction != null) {
 			printStuff(instruction);
 			//Set control lines
 			control = new Control(instruction);
@@ -213,9 +229,25 @@ public class Main {
 
 		//Run ALU Control
 		ALUControlInp = ALUControl.getALUControlInput(ALUOp1, ALUOp0, instruction.getFunct());
-		System.out.println("ALU Control Input = " + ALUControlInp);
+		//System.out.println("ALU Control Input = " + ALUControlInp);
 		boolean memToReg = control.getMemtoReg();
 
 		return ALUControlInp;
 	}
+	
+	private static void printRegisters(Registers registers, List<Integer> registerList){
+		
+		System.out.println("REGISTERS");
+		for(int i = 0; i < registerList.size(); i++){
+			System.out.println(registerList.get(i) + " " + registers.readReg(registerList.get(i)));
+		}
+	}
+	private static void printDataMemory(DataMemory dataMem, List<Integer> dataMemoryList){
+		System.out.println("DATAMEMORY");
+		for(int i = 0; i < dataMemoryList.size(); i++){
+			System.out.println(dataMemoryList.get(i) + " " + dataMem.readMemory(dataMemoryList.get(i), true));
+		}
+	}
 }
+
+

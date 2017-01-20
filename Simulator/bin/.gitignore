@@ -2,12 +2,6 @@
 /ALU.class
 /ALUControl.class
 /Control.class
-/DataMemory.class
-/Instruction.class
 /InstructionMemory.class
-/MipsSimulator.class
 /PC.class
 /Processor.class
-/Registers.class
-/Translator.class
-/Main.class
