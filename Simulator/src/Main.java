@@ -17,6 +17,7 @@ public class Main {
 		
 		List<Integer> registerList = new ArrayList<Integer>();
 		List<Integer> dataMemoryList = new ArrayList<Integer>();
+		ArrayList<Instruction> instrList = new ArrayList<Instruction>();
 		
 		short ALUControlInp = 0;
 		int reg1 = -1;
@@ -26,8 +27,8 @@ public class Main {
 		int writeReg = 0;
 		int writeData = 0;
 		BufferedReader br = null;
-		br = new BufferedReader(new FileReader("Simulator/instructions.txt"));
-		ArrayList<Instruction> instrList = new ArrayList<Instruction>();
+
+		br = new BufferedReader(new FileReader("instructions.txt"));
 
 		//Create registers and fill them with zeros
 		registers = new Registers();
@@ -57,80 +58,80 @@ public class Main {
 		//Fetch and parse first instruction
 		getNextInstruction();
 
-		while (instruction != null) {
+		while ((instruction != null) && !instruction.getInstrStr().equals("exit")) {
 			System.out.println("INSTRUCTION: " + instruction.getInstrStr());
 
-			System.out.println("pc before: " + pc.get());
+			System.out.println("PC COUNTER " + pc.get());
 
 			//Compute new value for program counter
 			int pcCount = addUnit.addition(pc.get(), 4);
 
-			//Check what register to write to
-			writeReg = mux(instruction.getRt(), instruction.getRd(), control.getRegDst());
-
-			//Read register RS
-			reg1 = registers.readReg(instruction.getRs());
-
-			//Check what register to read from
-			reg2 = mux(registers.readReg(instruction.getRt()), instruction.getOffset() ,control.getALUSrc());
-
-			//Run the ALU control
-			ALUControlInp = runALUControl();
-			
-			//Run ALU
-			alu.doInstruction(ALUControlInp, reg1, reg2);
-			ALURes = alu.getResult();
-			ALUZero = alu.getZero();
-
-			//Compute branch address
-			int branchAddr = addUnit.addition(pcCount, (instruction.getOffset() << 2));
-
-			//Check if branch
-			pcCount = mux(pcCount, branchAddr, (control.getBranch() && (ALUZero == 1)));
-
-			//Compute jump address
-			int jmpAddr = instruction.getOffset() << 2;
-			int upperBits = (pcCount >> 28);
-			jmpAddr = (upperBits << 28) | jmpAddr;
-
-			jmpAddr = mux(jmpAddr, reg1, control.getJumpReg());
-
-			//Check if jump
-			pcCount = mux(pcCount, jmpAddr, control.getJump());
-
-			//Read data memory
-			writeData = dataMem.readMemory(ALURes, control.getMemRead());
-
-			//Write to data memory
-			dataMem.writeMemory(ALURes, registers.readReg(instruction.getRt()), control.getMemWrite());
-			//Set which adress at data memory that has been changed
-			if(control.getMemWrite() && !dataMemoryList.contains(registers.readReg(instruction.getRt()))){
-				dataMemoryList.add(registers.readReg(instruction.getRt()));
-				Collections.sort(dataMemoryList);
-			}
-			
-			//Check which data to use
-			writeData = mux(ALURes, writeData, control.getMemtoReg());
-
-			//Write to register
-			registers.writeReg(writeReg, writeData, control.getRegWrite());
-			//Set what register has been changed
-			if(control.getRegWrite() && !registerList.contains(writeReg)){
-				registerList.add(writeReg);
-				Collections.sort(registerList);
+			if(!instruction.getInstrStr().equals("nop")){
+				//Check what register to write to
+				writeReg = mux(instruction.getRt(), instruction.getRd(), control.getRegDst());
+	
+				//Read register RS
+				reg1 = registers.readReg(instruction.getRs());
+	
+				//Check what register to read from
+				reg2 = mux(registers.readReg(instruction.getRt()), instruction.getOffset() ,control.getALUSrc());
+	
+				//Run the ALU control
+				ALUControlInp = runALUControl();
+				
+				//Run ALU
+				alu.doInstruction(ALUControlInp, reg1, reg2);
+				ALURes = alu.getResult();
+				ALUZero = alu.getZero();
+	
+				//Compute branch address
+				int branchAddr = addUnit.addition(pcCount, (instruction.getOffset() << 2));
+	
+				//Check if branch
+				pcCount = mux(pcCount, branchAddr, (control.getBranch() && (ALUZero == 1)));
+	
+				//Compute jump address
+				int jmpAddr = instruction.getOffset() << 2;
+				int upperBits = (pcCount >> 28);
+				jmpAddr = (upperBits << 28) | jmpAddr;
+	
+				jmpAddr = mux(jmpAddr, reg1, control.getJumpReg());
+	
+				//Check if jump
+				pcCount = mux(pcCount, jmpAddr, control.getJump());
+	
+				//Read data memory
+				writeData = dataMem.readMemory(ALURes, control.getMemRead());
+	
+				//Write to data memory
+				dataMem.writeMemory(ALURes, registers.readReg(instruction.getRt()), control.getMemWrite());
+				//Set which adress at data memory that has been changed
+				if(control.getMemWrite() && !dataMemoryList.contains(ALURes)){
+					dataMemoryList.add(ALURes);
+					Collections.sort(dataMemoryList);
+				}
+				
+				//Check which data to use
+				writeData = mux(ALURes, writeData, control.getMemtoReg());
+	
+				//Write to register
+				registers.writeReg(writeReg, writeData, control.getRegWrite());
+				//Set what register has been changed
+				if(control.getRegWrite() && !registerList.contains(writeReg)){
+					registerList.add(writeReg);
+					Collections.sort(registerList);
+				}
 			}
 			
 			//Update program counter
 			pc.set(pcCount);
-			System.out.println("PROGRAM COUNTER CURRENT: " + pc.get());
-			
+		
 			printRegisters(registers, registerList);
 			printDataMemory(dataMem, dataMemoryList);
 
 			//Fetch and parse next instruction
 			getNextInstruction();
 
-			System.out.println("pc after: " + pc.get());
 			System.out.println();
 		}   
 		br.close();
@@ -204,7 +205,7 @@ public class Main {
 		instruction = instrMem.fetch(pc.get());
 
 		if (instruction != null) {
-			printStuff(instruction);
+			//printStuff(instruction);
 			//Set control lines
 			control = new Control(instruction);
 		}
@@ -229,8 +230,6 @@ public class Main {
 
 		//Run ALU Control
 		ALUControlInp = ALUControl.getALUControlInput(ALUOp1, ALUOp0, instruction.getFunct());
-		//System.out.println("ALU Control Input = " + ALUControlInp);
-		boolean memToReg = control.getMemtoReg();
 
 		return ALUControlInp;
 	}
@@ -248,6 +247,19 @@ public class Main {
 			System.out.println(dataMemoryList.get(i) + " " + dataMem.readMemory(dataMemoryList.get(i), true));
 		}
 	}
-}
+	private static List<Integer> resetRegisters(List<Integer> registerList){
+		registerList.clear();
+		return registerList;
+	}
+	
+	private static List<Integer> resetDatamemory(List<Integer> dataMemoryList){
+		dataMemoryList.clear();
+		return dataMemoryList;
+	}
+	private static ArrayList<Instruction> resetInsructionMemory(ArrayList<Instruction> instMemList){
+		instMemList.clear();
+		return instMemList;
+	}
+ }
 
 
