@@ -17,5 +17,3 @@ j 17
 nop
 nop
 nop
-
-

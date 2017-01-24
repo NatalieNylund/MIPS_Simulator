@@ -27,6 +27,7 @@ public class Main {
 		int writeReg = 0;
 		int writeData = 0;
 		BufferedReader br = null;
+
 		br = new BufferedReader(new FileReader("instructions.txt"));
 
 		//Create registers and fill them with zeros
