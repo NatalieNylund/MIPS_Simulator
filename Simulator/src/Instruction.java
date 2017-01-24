@@ -50,6 +50,7 @@ public class Instruction {
 	private boolean i_type = false;
 	private boolean is_exit;
 	private boolean is_nop;
+	private String op;
 
 	private String instrStr;
 
@@ -59,7 +60,7 @@ public class Instruction {
 
 			line = line.replaceAll(",", "");
 			StringTokenizer tokens = new StringTokenizer(line, " ");
-			String op = "", t1 = "", t2 = "", t3 = "";
+			String t1 = "", t2 = "", t3 = "";
 
 			op = tokens.nextToken();
 
@@ -304,5 +305,8 @@ public class Instruction {
 
 	public String getInstrStr() {
 		return instrStr;
+	}
+	public String getName(){
+		return op;
 	}
 }
