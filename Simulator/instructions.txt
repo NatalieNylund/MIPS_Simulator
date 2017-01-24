@@ -3,6 +3,7 @@ lw $t8, 0x50($t9)
 lw $v0, 0x0020
 add $t0, $t1, $t2 
 sub $s0, $t0, $v0
+j 7
 beq $sp, $fp, 0x01
 and $t0, $t1, $t2
 or $t3, $t4, $t5
@@ -12,4 +13,4 @@ add $gp, $t0, $t1
 sw $gp, 0x0020
 lw $v0, 0x0020
 lw $v1, 0x0020
-j
+
