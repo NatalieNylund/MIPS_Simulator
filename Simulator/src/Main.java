@@ -26,7 +26,7 @@ public class Main {
 		int writeReg = 0;
 		int writeData = 0;
 		BufferedReader br = null;
-		br = new BufferedReader(new FileReader("instructions.txt"));
+		br = new BufferedReader(new FileReader("Simulator/instructions.txt"));
 		ArrayList<Instruction> instrList = new ArrayList<Instruction>();
 
 		//Create registers and fill them with zeros
