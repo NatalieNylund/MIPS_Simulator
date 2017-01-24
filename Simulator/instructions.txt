@@ -13,7 +13,7 @@ sra $t7, $t0, 0x01
 srl $t7, $t0, 0x01
 beq $sp, $fp, 0x01
 nop
-j 18
+j 17
 nop
 nop
 nop

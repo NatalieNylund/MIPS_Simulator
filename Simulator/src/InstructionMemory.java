@@ -5,7 +5,6 @@ import java.util.ArrayList;
  * Each element in the array is of the class Instruction, i.e. represents 32 bits (or 4 bytes)
  */
 public class InstructionMemory {
-	private int op;
 	private Instruction[] instructions;
 	private int numOfInstr;
 
@@ -35,6 +34,12 @@ public class InstructionMemory {
 			return instructions[pc/4];
 		} else {
 			return null;
+		}
+	}
+	
+	public void reset(){
+		for(int i = 0; i < instructions.length; i++){
+			instructions[i] = null;
 		}
 	}
 
