@@ -72,8 +72,6 @@ public class Control {
 				setALUSrc(true);
 				setALUOp1(true);
 			}
-
-
 		}
 		/* If ori */
 		else if(instr.getOpcode() == 0x0D) {
@@ -85,10 +83,6 @@ public class Control {
 			setRegWrite(true);
 			setALUSrc(true);
 		}
-	}
-	
-	public void update(Instruction instr) {
-		setControlLines(instr);
 	}
 
 	private void setRegDst(boolean val){
