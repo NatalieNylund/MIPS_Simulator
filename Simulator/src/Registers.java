@@ -42,7 +42,7 @@ public class Registers {
 
 	public void reset() {
 		for(int i = 0; i < registers.length; i++) {
-			registers[i] = 1;
+			registers[i] = 0;
 		}
 	}
 
