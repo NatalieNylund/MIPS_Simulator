@@ -26,7 +26,13 @@ public class Processor {
 		instrList = new ArrayList<Instruction>();
 
 		BufferedReader br = null;
-		br = new BufferedReader(new FileReader(fileName));
+
+		try {
+			br = new BufferedReader(new FileReader(fileName));
+		} catch (FileNotFoundException e) {
+			System.out.println("File not found: " + e.getMessage());
+			System.exit(1);
+		}
 
 		//Create registers and fill them with zeros
 		registers = new Registers();
@@ -41,9 +47,13 @@ public class Processor {
 
 		while(line != null) {
 			line = line.trim();
+			Instruction instr;
 
 			if((line.length() != 0) && (line.length() > 1)) {
-				instrList.add(new Instruction(line));
+				instr = new Instruction(line);
+				if(instr.getOpcode() != -1) {
+					instrList.add(new Instruction(line));
+				}
 			}
 
 			//Change line from file
@@ -164,7 +174,7 @@ public class Processor {
 	}
 	
 	public void stepMIPS(){
-		if(instruction.getExit()){
+		if(instruction != null && instruction.getExit()){
 			printInstructions();
 
 		}

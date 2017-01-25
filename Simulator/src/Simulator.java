@@ -4,13 +4,13 @@ public class Simulator {
 
 	public static void main(String[] args) throws Exception {
 
-//			if(args.length < 1) {
-//				System.out.println("Must include file as argument");
-//				System.exit(1);
-//			}
-//			
-			//String fileName = args[0];
-			Processor processor = new Processor("instructions.txt");
+			if(args.length < 1) {
+				System.out.println("Must include file as argument");
+				System.exit(1);
+			}
+
+			String fileName = args[0];
+			Processor processor = new Processor(fileName);
 			
 		
 		
