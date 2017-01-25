@@ -51,7 +51,6 @@ public class Instruction {
 	private boolean is_exit;
 	private boolean is_nop;
 	private String op;
-
 	private String instrStr;
 
 	
@@ -126,15 +125,15 @@ public class Instruction {
 				opcode = OPCODE_BEQ;
 				i_type = true;
 			}
-			
 			else if(op.equalsIgnoreCase("nop")) {
 				is_nop = true;
 			}
-
 			else if(op.equalsIgnoreCase("exit")) {
 				is_exit = true;
 			}
-
+			else {
+				opcode = -1;
+			}
 			
 			//Parse additional parameters
 			if(r_type){
@@ -197,7 +196,6 @@ public class Instruction {
 			}
 	}
 
-
 	private short parseReg(String register) throws Exception {
 		if(register.charAt(0) == '$') {
 			if(register.equalsIgnoreCase("$zero")) {
@@ -255,21 +253,27 @@ public class Instruction {
 	public short getOpcode(){
 		return opcode;
 	}
+
 	public short getFunct(){
 		return funct;
 	}
+
 	public short getOffset(){
 		return offset;
 	}
+
 	public short getRd(){
 		return rd;
 	}
+
 	public short getRs(){
 		return rs;
 	}
+
 	public short getRt(){
 		return rt;
 	}
+
 	public char getType(){
 		if(r_type){
 			return 'r';
@@ -285,27 +289,19 @@ public class Instruction {
 			return 'e';
 		}
 	}
+
 	public boolean getExit(){
 		return is_exit;
 	}
+
 	public boolean getNop(){
 		return is_nop;
-	}
-
-	public boolean getIsRd(){
-		return isRd;
-	}
-	
-	public boolean getIsRt(){
-		return isRt;
-	}
-	public boolean getIsRs(){
-		return isRs;
 	}
 
 	public String getInstrStr() {
 		return instrStr;
 	}
+
 	public String getName(){
 		return op;
 	}
