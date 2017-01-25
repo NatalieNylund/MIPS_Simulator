@@ -1,9 +1,17 @@
+/*
+ * Course: Computer Organization and Architecture, HT16
+ * Author: Natalie Nylund (oi11nnd), Josefin Svensson (c14jsn)
+ * Date: 2017-01-25
+ * 
+ * Description:
+ * Contains a memory for instructions in the form of an array
+ * Each element in the array is of the class Instruction, i.e. 
+ * represents 32 bits (or 4 bytes)
+ */
+
 import java.util.ArrayList;
 
-/*
- * Contains a memory for instructions in the form of an array
- * Each element in the array is of the class Instruction, i.e. represents 32 bits (or 4 bytes)
- */
+
 public class InstructionMemory {
 	private Instruction[] instructions;
 	private int numOfInstr;
