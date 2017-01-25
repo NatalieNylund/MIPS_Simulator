@@ -1,5 +1,12 @@
 /*
+ * Course: Computer Organization and Architecture, HT16
+ * Author: Natalie Nylund (oi11nnd), Josefin Svensson (c14jsn)
+ * Date: 2017-01-25
  * 
+ * Description:
+ * This method  checks the ALU control input to decide
+ * what instruction to perform, then uses the given register
+ * values to perform that instruction upon.
  */
 public class ALU {
 	
@@ -18,11 +25,7 @@ public class ALU {
 	public ALU(){
 		
 	}
-	/*
-	 * This method  checks the ALU control input to decide
-	 * what instruction to perform, then uses the given register
-	 * values to perform that instruction upon.
-	 */
+
 	public void doInstruction(short input, int reg1, int reg2){
 		
 		if(input == AND){
