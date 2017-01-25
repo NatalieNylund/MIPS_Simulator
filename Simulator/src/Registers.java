@@ -1,4 +1,12 @@
-
+/*
+ * Course: Computer Organization and Architecture, HT16
+ * Author: Natalie Nylund (oi11nnd), Josefin Svensson (c14jsn)
+ * Date: 2017-01-25
+ * 
+ * Description:
+ * This class keeps track of the available registers and
+ * stores information given by the instructions.
+ */
 public class Registers {
 	private int[] registers;
 	String[] names;
