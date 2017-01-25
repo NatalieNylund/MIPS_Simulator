@@ -2,6 +2,7 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.SwingUtilities;
 
 class ButtonListener implements ActionListener  {
 
@@ -10,22 +11,49 @@ class ButtonListener implements ActionListener  {
     public ButtonListener(Processor processor){
     	runMips = processor;
     }
-    
-    @Override
+
+	@Override
     public void actionPerformed(ActionEvent e) {
+    	
+    	Thread thread = new Thread(new Runnable() {
+
+	        @Override
+	        public void run() {
+	        	runMips.stop(false);
+	        	runMips.runMIPS();
+
+	        	System.out.println(SwingUtilities.isEventDispatchThread());
+	        	System.out.println(Thread.currentThread().getName());
+	           
+	        }});
     	if(e.getSource() == UserInterface.runButton){
-			runMips.runMIPS();
+    		
+    		thread.start();
+
     	}
     	if(e.getSource() == UserInterface.stepButton){
     		runMips.stepMIPS();
     	}
     	if(e.getSource() == UserInterface.resetButton){
-    		runMips.reset();
     		
+
+    		runMips.stop(true);	
+    		try {
+				thread.join();
+
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+    		runMips.reset();	
+
+    		
+
     	}
     	if(e.getSource() == UserInterface.checkBox){
     		runMips.setHex();
     	}
-
+    	
     }
+    
 }
