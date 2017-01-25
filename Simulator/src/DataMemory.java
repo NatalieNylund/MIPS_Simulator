@@ -1,4 +1,12 @@
-
+/*
+ * Course: Computer Organization and Architecture, HT16
+ * Author: Natalie Nylund (oi11nnd), Josefin Svensson (c14jsn)
+ * Date: 2017-01-25
+ * 
+ * Description:
+ * Contains an array that supports 1000 bytes of memory and
+ * represents the data memory of a MIPS32 processor. 
+ */
 public class DataMemory {
 	private int[] data;
 
