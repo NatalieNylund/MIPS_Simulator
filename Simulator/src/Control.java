@@ -1,6 +1,11 @@
 /*
+ * Course: Computer Organization and Architecture, HT16
+ * Author: Natalie Nylund (oi11nnd), Josefin Svensson (c14jsn)
+ * Date: 2017-01-25
+ * 
+ * Description:
  * Takes instruction op code (bits 31-26) as input and sets the control lines
- * according to something
+ * according to the MIPS32 architecture.
  */
 
 public class Control {
