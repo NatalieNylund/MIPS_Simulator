@@ -1,3 +1,15 @@
+/*
+ * Course: Computer Organization and Architecture, HT16
+ * Author: Natalie Nylund (oi11nnd), Josefin Svensson (c14jsn)
+ * Date: 2017-01-25
+ * 
+ * Description:
+ * This class puts all the other classes together. It creates
+ * instructions and send them around, making calls to methods
+ * represented for these instructions. This class fills the 
+ * registers and memories that are supported according to the
+ * MIPS32 processor.
+ */
 import java.io.*;
 import java.math.BigInteger;
 import java.util.*;
@@ -237,6 +249,7 @@ public class Processor {
 					Collections.sort(dataMemoryList);
 				}
 				
+			
 				//Check which data to use
 				writeData = mux(ALURes, writeData, control.getMemtoReg());
 	
