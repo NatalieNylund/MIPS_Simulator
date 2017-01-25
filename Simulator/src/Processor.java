@@ -17,15 +17,16 @@ public class Processor {
 	private List<Integer> dataMemoryList;
 	private ArrayList<Instruction> instrList;
 	private boolean isHex = false;
+	private boolean isStop = false;
 	
-	public Processor() throws Exception{
+	public Processor(String fileName) throws Exception{
 		
 		registerList = new ArrayList<Integer>();
 		dataMemoryList = new ArrayList<Integer>();
 		instrList = new ArrayList<Instruction>();
 
 		BufferedReader br = null;
-		br = new BufferedReader(new FileReader("instructions.txt"));
+		br = new BufferedReader(new FileReader(fileName));
 
 		//Create registers and fill them with zeros
 		registers = new Registers();
@@ -146,12 +147,15 @@ public class Processor {
 		}
 			
 	}
+	public void stop(boolean stop){
+		isStop = stop;
+	}
 	public void runMIPS(){
-		
-		
-		while ((instruction != null)) {
+
+		while ((instruction != null && !isStop)) {
+
 			stepMIPS();
-			if(instruction.getExit()){
+			if(instruction != null && instruction.getExit()){
 				stepMIPS();
 				break;
 			}
@@ -162,6 +166,7 @@ public class Processor {
 	public void stepMIPS(){
 		if(instruction.getExit()){
 			printInstructions();
+
 		}
 		else if((instruction != null)){
 			
@@ -301,6 +306,7 @@ public class Processor {
 	private void resetPc(){
 		pc.reset();
 	}
+	//Empty the list and arrays
 	public void reset(){
 
 		UserInterface.registerArea.setText("");
