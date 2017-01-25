@@ -174,7 +174,7 @@ public class Processor {
 	}
 	
 	public void stepMIPS(){
-		if(instruction.getExit()){
+		if(instruction != null && instruction.getExit()){
 			printInstructions();
 
 		}
