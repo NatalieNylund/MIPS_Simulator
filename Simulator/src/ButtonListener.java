@@ -3,13 +3,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.SwingUtilities;
+import javax.xml.bind.SchemaOutputResolver;
 
 class ButtonListener implements ActionListener  {
 
   	private Processor runMips;
+  	private boolean running;
     
     public ButtonListener(Processor processor){
     	runMips = processor;
+    	running = false;
     }
 
 	@Override
@@ -19,16 +22,17 @@ class ButtonListener implements ActionListener  {
 
 	        @Override
 	        public void run() {
+	        	running = true;
 	        	runMips.stop(false);
 	        	runMips.runMIPS();
-
-	        	System.out.println(SwingUtilities.isEventDispatchThread());
-	        	System.out.println(Thread.currentThread().getName());
-	           
+	        	running = false;
 	        }});
+
     	if(e.getSource() == UserInterface.runButton){
-    		
-    		thread.start();
+
+   			if(!running) {
+				thread.start();
+			}
 
     	}
     	if(e.getSource() == UserInterface.stepButton){
@@ -37,17 +41,15 @@ class ButtonListener implements ActionListener  {
     	if(e.getSource() == UserInterface.resetButton){
     		
 
-    		runMips.stop(true);	
-    		try {
-				thread.join();
+    		runMips.stop(true);
 
+			try {
+				Thread.sleep(50);
 			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-    		runMips.reset();	
 
-    		
+    		runMips.reset();	
 
     	}
     	if(e.getSource() == UserInterface.checkBox){
