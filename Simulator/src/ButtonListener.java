@@ -35,9 +35,13 @@ class ButtonListener implements ActionListener  {
 			}
 
     	}
+
     	if(e.getSource() == UserInterface.stepButton){
-    		runMips.stepMIPS();
+    		if(!running) {
+				runMips.stepMIPS();
+			}
     	}
+
     	if(e.getSource() == UserInterface.resetButton){
     		
 
