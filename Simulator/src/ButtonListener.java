@@ -1,3 +1,20 @@
+/*
+ * Course: Computer Organization and Architecture, HT16
+ * Author: Natalie Nylund (oi11nnd), Josefin Svensson (c14jsn)
+ * Date: 2017-01-25
+ * 
+ * Description:
+ * This class listens to buttons in the interface and 
+ * calls to methods corresponding to the action of a button.
+ * The run button causes the program to create a new thread
+ * and runs all the instructions from the instruction file.
+ * The step button steps through the instruction file and 
+ * simulates one instruction per click.
+ * The reset button resets the list that have been filled
+ * and clears the screen.
+ */
+
+
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
