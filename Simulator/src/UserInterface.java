@@ -1,3 +1,13 @@
+/*
+ * Course: Computer Organization and Architecture, HT16
+ * Author: Natalie Nylund (oi11nnd), Josefin Svensson (c14jsn)
+ * Date: 2017-01-25
+ * 
+ * Description:
+ * This class represents the user interface of the program.
+ * All the text areas and the buttons are created here.
+ */
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
